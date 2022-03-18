@@ -1,3 +1,3 @@
-import LoadingContent from './index.vue';
+import LoadingContent from './index.vue'
 
-export { LoadingContent };
+export { LoadingContent }

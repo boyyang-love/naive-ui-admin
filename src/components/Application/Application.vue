@@ -12,8 +12,7 @@
     </n-loading-bar-provider>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 import {
     NDialogProvider,
     NNotificationProvider,
@@ -22,19 +21,4 @@ import {
 } from 'naive-ui'
 import { MessageContent } from '@/components/MessageContent'
 import { DialogContent } from '@/components/DialogContent'
-
-export default defineComponent({
-    name: 'Application',
-    components: {
-        NDialogProvider,
-        NNotificationProvider,
-        NMessageProvider,
-        NLoadingBarProvider,
-        MessageContent,
-        DialogContent,
-    },
-    setup() {
-        return {}
-    },
-})
 </script>
