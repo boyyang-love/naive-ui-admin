@@ -1,9 +1,9 @@
 module.exports = {
   printWidth: 100,
-  tabWidth: 2,
+  tabWidth: 4,
   useTabs: false,
-  semi: true,
-  vueIndentScriptAndStyle: true,
+  semi: false,
+  vueIndentScriptAndStyle: false,
   singleQuote: true,
   quoteProps: 'as-needed',
   bracketSpacing: true,
