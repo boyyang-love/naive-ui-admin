@@ -4,24 +4,19 @@ import { AxiosTransform } from './axiosTransform'
 import axios, { AxiosResponse } from 'axios'
 import { checkStatus } from './checkStatus'
 import { joinTimestamp, formatRequestDate } from './helper'
-import { RequestEnum, ResultEnum, ContentTypeEnum } from '@/enums/httpEnum'
+import { RequestEnum, ResultEnum } from '@/enums/httpEnum'
 import { PageEnum } from '@/enums/pageEnum'
-
 import { useGlobSetting } from '@/hooks/setting'
-
 import { isString } from '@/utils/is/'
 import { deepMerge, isUrl } from '@/utils'
 import { setObjToUrlParams } from '@/utils/urlUtils'
-
 import { RequestOptions, Result, CreateAxiosOptions } from './types'
-
 import { useUserStoreWidthOut } from '@/store/modules/user'
+import router from '@/router'
+import { storage } from '@/utils/Storage'
 
 const globSetting = useGlobSetting()
 const urlPrefix = globSetting.urlPrefix || ''
-
-import router from '@/router'
-import { storage } from '@/utils/Storage'
 
 /**
  * @description: 数据处理，方便区分多种处理方式
@@ -50,48 +45,44 @@ const transform: AxiosTransform = {
         if (!isTransformResponse) {
             return res.data
         }
-
         const { data } = res
-
         const $dialog = window['$dialog']
         const $message = window['$message']
-
         if (!data) {
             // return '[HTTP] Request has no return value';
             throw new Error('请求出错，请稍候重试')
         }
         //  这里 code，result，message为 后台统一的字段，需要修改为项目自己的接口返回格式
-        const { code, result, message } = data
+        const { code, result, msg } = data
         // 请求成功
-        const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS
+        const hasSuccess = data && Reflect.has(data, 'code')
         // 是否显示提示信息
         if (isShowMessage) {
             if (hasSuccess && (successMessageText || isShowSuccessMessage)) {
                 // 是否显示自定义信息提示
                 $dialog.success({
                     type: 'success',
-                    content: successMessageText || message || '操作成功！',
+                    content: successMessageText || msg || '操作成功！',
                 })
             } else if (!hasSuccess && (errorMessageText || isShowErrorMessage)) {
                 // 是否显示自定义信息提示
-                $message.error(message || errorMessageText || '操作失败！')
+                $message.error(msg || errorMessageText || '操作失败！')
             } else if (!hasSuccess && options.errorMessageMode === 'modal') {
                 // errorMessageMode=‘custom-modal’的时候会显示modal错误弹窗，而不是消息提示，用于一些比较重要的错误
                 $dialog.info({
                     title: '提示',
-                    content: message,
+                    content: msg,
                     positiveText: '确定',
                     onPositiveClick: () => {},
                 })
             }
         }
-
         // 接口请求成功，直接返回结果
         if (code === ResultEnum.SUCCESS) {
             return result
         }
         // 接口请求错误，统一提示错误信息 这里逻辑可以根据项目进行修改
-        let errorMsg = message
+        let errorMsg = msg
         switch (code) {
             // 请求失败
             case ResultEnum.ERROR:
@@ -132,18 +123,16 @@ const transform: AxiosTransform = {
             joinTime = true,
             urlPrefix,
         } = options
-
         const isUrlStr = isUrl(config.url as string)
-
         if (!isUrlStr && joinPrefix) {
             config.url = `${urlPrefix}${config.url}`
         }
-
         if (!isUrlStr && apiUrl && isString(apiUrl)) {
             config.url = `${apiUrl}${config.url}`
         }
         const params = config.params || {}
         const data = config.data || false
+        // get 请求
         if (config.method?.toUpperCase() === RequestEnum.GET) {
             if (!isString(params)) {
                 // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
@@ -154,6 +143,7 @@ const transform: AxiosTransform = {
                 config.params = undefined
             }
         } else {
+            // post 请求
             if (!isString(params)) {
                 formatDate && formatRequestDate(params)
                 if (
@@ -250,7 +240,6 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
                 authenticationScheme: '',
                 // 接口前缀
                 prefixUrl: urlPrefix,
-                headers: { 'Content-Type': ContentTypeEnum.JSON },
                 // 数据处理方式
                 transform,
                 // 配置项，下面的选项都可以在独立的接口请求中覆盖
