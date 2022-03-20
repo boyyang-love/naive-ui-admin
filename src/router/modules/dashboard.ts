@@ -1,9 +1,9 @@
-import { RouteRecordRaw } from 'vue-router';
-import { Layout } from '@/router/constant';
-import { DashboardOutlined } from '@vicons/antd';
-import { renderIcon } from '@/utils/index';
+import { RouteRecordRaw } from 'vue-router'
+import { Layout } from '@/router/constant'
+import { DashboardOutlined } from '@vicons/antd'
+import { renderIcon } from '@/utils/index'
 
-const routeName = 'dashboard';
+const routeName = 'dashboard'
 
 /**
  * @param name 路由名称, 必须设置,且不能重名
@@ -16,29 +16,29 @@ const routeName = 'dashboard';
  * @param meta.sort 排序越小越排前
  * */
 const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/dashboard',
-    name: routeName,
-    redirect: '/dashboard/console',
-    component: Layout,
-    meta: {
-      title: 'Dashboard',
-      icon: renderIcon(DashboardOutlined),
-      permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workplace'],
-      sort: 0,
-    },
-    children: [
-      {
-        path: 'console',
-        name: `${routeName}_console`,
+    {
+        path: '/dashboard',
+        name: routeName,
+        redirect: '/dashboard/console',
+        component: Layout,
         meta: {
-          title: '主控台',
-          permissions: ['dashboard_console'],
+            title: 'Dashboard',
+            icon: renderIcon(DashboardOutlined),
+            permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workplace'],
+            sort: 0,
         },
-        component: () => import('@/views/dashboard/console/console.vue'),
-      }
-    ],
-  },
-];
+        children: [
+            {
+                path: 'console',
+                name: `${routeName}_console`,
+                meta: {
+                    title: '主控台',
+                    permissions: ['dashboard_console'],
+                },
+                component: () => import('@/views/dashboard/console/console.vue'),
+            },
+        ],
+    },
+]
 
-export default routes;
+export default routes

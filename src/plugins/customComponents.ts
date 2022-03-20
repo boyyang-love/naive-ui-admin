@@ -3,5 +3,5 @@
  * @param app
  */
 export function setupCustomComponents() {
-  // app.component()
+    // app.component()
 }
